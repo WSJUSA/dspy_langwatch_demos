@@ -1,0 +1,28 @@
+{
+  "predict": {
+    "traces": [],
+    "train": [],
+    "demos": [],
+    "signature": {
+      "instructions": "Evaluate the grammatical correctness of the provided sentence. Output \"1\" if the sentence is grammatically correct and \"0\" if it is not. Ensure your responses are clear and concise.",
+      "fields": [
+        {
+          "prefix": "Sentence:",
+          "description": "${sentence}"
+        },
+        {
+          "prefix": "Classify the sentence:",
+          "description": "1 if correct, 0 if incorrect"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.12",
+      "dspy": "2.6.27",
+      "cloudpickle": "3.1"
+    }
+  }
+}

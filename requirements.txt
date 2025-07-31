@@ -1,0 +1,6 @@
+# Langwatch requires Python 3.12 or higher
+dspy
+langwatch
+python-dotenv 
+datasets
+pandas

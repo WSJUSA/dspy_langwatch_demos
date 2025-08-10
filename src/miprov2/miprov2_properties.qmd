@@ -1,0 +1,107 @@
+---
+title: "DSPy MIPROv2 Parameters Guide"
+author: "Will James"
+date: last-modified
+description: "This page enumerates and describes the MIPROv2 optimizer's Constructor and Compiler parameters and behavior relate to each."
+---
+
+## Background
+
+This page exists to support the [MIPROv2 walk through guide](/projects/dspy/src/miprov2/miprov2_explained.html) that describes MIPROv2's step by step process and how to control those steps with these parameters.
+
+This is unofficial documentation intended to aid in clarifying what each parameter in the class constructor and compiler do, so that you do not need to dig into the source code.  
+
+DSPy Source Version: 3.0.0b3
+This page was last updated on 2025.08.07.
+
+[For official MIPROv2 documentation see the optimizer page at DSPy.ai](https://dspy.ai/api/optimizers/MIPROv2/) 
+
+## Constructor Parameters
+
+```python
+dspy.MIPROv2(
+    metric: Callable,
+    prompt_model: Any | None = None,
+    task_model: Any | None = None,
+    teacher_settings: dict | None = None,
+    max_bootstrapped_demos: int = 4,
+    max_labeled_demos: int = 4,
+    auto: Literal["light", "medium", "heavy"] | None = "light",
+    num_candidates: int | None = None,
+    num_threads: int | None = None,
+    max_errors: int | None = None,
+    seed: int = 9,
+    init_temperature: float = 0.5,
+    verbose: bool = False,
+    track_stats: bool = True,
+    log_dir: str | None = None,
+    metric_threshold: float | None = None,
+)
+```
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `metric` | Callable | - | Function that compares LLM responses to expected answers from the validation set. Determines accuracy and scoring rules for optimization. |
+| `prompt_model` | Any \| None | None | LLM model for generating instruction variations (defaults to dspy.settings.lm). |
+| `task_model` | Any \| None | None | LLM model for running optimization trials (defaults to dspy.settings.lm). |
+| `teacher_settings` | dict \| None | {} | LLM model settings for running bootstrap demo evaluations. |
+| `max_bootstrapped_demos` | int | 4 | Maximum number of examples selected from the training per demonstration set, that an LLM evaluates successfully. |
+| `max_labeled_demos` | int | 4 | Maximum number of examples selected from the training set per demonstration set. These are randomly selected without LLM evaluation. |
+| `auto` | Literal['light', 'medium', 'heavy'] \| None | 'light' | Automatic optimization mode controlling intensity. |
+| `num_candidates` | int \| None | None | Number of demonstration sets and instruction candidates to create. |
+| `num_threads` | int \| None | None | Number of threads for parallel LLM calls during optimization. |
+| `max_errors` | int \| None | None | Maximum runtime errors allowed during evaluation. |
+| `seed` | int | 9 | Random seed for reproducibility. |
+| `init_temperature` | float | 0.5 | Sampling temperature for instruction generation. |
+| `verbose` | bool | False | Enable verbose output. |
+| `track_stats` | bool | True | Track optimization statistics. |
+| `log_dir` | str \| None | None | Directory for saving logs. |
+| `metric_threshold` | float \| None | None | Metric threshold for bootstrap demo selection. |
+
+## compile Method Parameters
+
+```python
+meth compile(
+    student: Any,
+    *,
+    trainset: list,
+    teacher: Any = None,
+    valset: list | None = None,
+    num_trials: int | None = None,
+    max_bootstrapped_demos: int | None = None,
+    max_labeled_demos: int | None = None,
+    seed: int | None = None,
+    minibatch: bool = True,
+    minibatch_size: int = 35,
+    minibatch_full_eval_steps: int = 5,
+    program_aware_proposer: bool = True,
+    data_aware_proposer: bool = True,
+    view_data_batch_size: int = 10,
+    tip_aware_proposer: bool = True,
+    fewshot_aware_proposer: bool = True,
+    requires_permission_to_run: bool = True,
+    provide_traceback: bool | None = None,
+)
+```
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `student` | Any | - | DSPy program to optimize.|
+| `trainset` | list | - | Training dataset used for selecting labeled demos and bootstrap demo examples. |
+| `teacher` | Any | None | LLM model for running bootstrap demo evaluations. Usually a higher-quality model than the `task_model`. |
+| `valset` | list \| None | None | Validation dataset used for evaluating instruction and demo set combinations. Each trial runs the entire valset by default. |
+| `num_trials` | int \| None | None | Number of optimization trials to run. Required when not using auto mode. Each trial evaluates one specific instruction + demo set combination. |
+| `max_bootstrapped_demos` | int \| None | None | Override the constructor `max_bootstrapped_demos` value. |
+| `max_labeled_demos` | int \| None | None | Override the constructor `max_labeled_demos` value. |
+| `seed` | int \| None | None | Override random seed. |
+| `minibatch` | bool | True | Enable minibatch evaluations to limit LLM runs per trial. Uses `minibatch_size` examples instead of full `valset`. |
+| `minibatch_size` | int | 35 | Number of `valset` examples to use per trial when minibatch=True. |
+| `minibatch_full_eval_steps` | int | 5 | Frequency of full evaluation trials on the most promising candidate. |
+| `program_aware_proposer` | bool | True | Enable inclusion of the student program structure in instruction generation. |
+| `data_aware_proposer` | bool | True | Enable LLM analysis of trainset characteristics for instruction generation. Uses `view_data_batch_size`. |
+| `view_data_batch_size` | int | 10 | Number of training samples to analyze for data-aware instruction generation. |
+| `tip_aware_proposer` | bool | True | Enable inclusion of randomly generated tips (e.g., "be creative", "be concise") in instruction generation. |
+| `fewshot_aware_proposer` | bool | True | Enable inclusion of selected bootstrap demos in the instruction generation process. Not the same as bootstrapping in evaluation trials. |
+| `requires_permission_to_run` | bool | True | Set Flase to disable MIPROv2 warnings about LLM run costs and required confirmation. |
+| `provide_traceback` | bool \| None | None | Provide tracebacks for errors. |
+

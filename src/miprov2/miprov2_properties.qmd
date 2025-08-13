@@ -11,8 +11,7 @@ This page exists to support the [MIPROv2 walk through guide](/projects/dspy/src/
 
 This is unofficial documentation intended to aid in clarifying what each parameter in the class constructor and compiler do, so that you do not need to dig into the source code.  
 
-DSPy Source Version: 3.0.0b3
-This page was last updated on 2025.08.07.
+Based on DSPy Source Version: 3.0.0
 
 [For official MIPROv2 documentation see the optimizer page at DSPy.ai](https://dspy.ai/api/optimizers/MIPROv2/) 
 
@@ -79,7 +78,7 @@ meth compile(
     view_data_batch_size: int = 10,
     tip_aware_proposer: bool = True,
     fewshot_aware_proposer: bool = True,
-    requires_permission_to_run: bool = True,
+    requires_permission_to_run: bool = True, # deprecated
     provide_traceback: bool | None = None,
 )
 ```
